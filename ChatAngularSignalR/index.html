@@ -10,6 +10,7 @@
     <script src="Scripts/jquery.signalR-2.2.0.js"></script>
     <script src="signalr/hubs"></script>
     <script src="Scripts/angular.js"></script>
+    <script src="Scripts/scrollglue.js"></script>
     <!--<script src="Scripts/bootstrap.js"></script>-->
 
 
@@ -35,7 +36,7 @@
         (function () {
 
 
-            var app = angular.module('chatApp', []);
+            var app = angular.module('chatApp', ['luegg.directives']);
             app.value('$', $);
 
             //when the window unloads - send a logout click event
@@ -246,7 +247,7 @@
                             <div class="form-group">
                                 <input name="userName" class="form-control" type="text" ng-model="name" maxlength="10" required valid-user-name />
                             </div>
-                            <button class="btn btn-primary" ng-click="registerUser()" ng-disabled="myForm.userName.$invalid">Register user</button>
+                            <input type="button" class="btn btn-primary" ng-click="registerUser()" ng-disabled="myForm.userName.$invalid" value="Register User" />
                         </div>
 
                         <div class="panel-body" ng-show="isUserRegistered">
@@ -257,7 +258,7 @@
                             
                         </div>
 
-                        <ul class="list-group users">
+                        <ul class="list-group users" scroll-glue>
 
                             <li class="list-group-item" ng-repeat="user in users">
                                 {{user.name}}
@@ -276,7 +277,7 @@
 
                 <div class="col-md-8">
 
-                    <div class="panel panel-primary messages">
+                    <div class="panel panel-primary messages" scroll-glue>
                         <div class="panel-heading">
                             Messages
                             <span class="badge pull-right">
@@ -306,7 +307,7 @@
                         </div>
                         <div class="col-md-2">
 
-                            <input class="btn btn-primary pull-right" type="button" value="Send" ng-click="sendMessage()" ng-disabled="isUserRegistered===false || myForm.chatMessage.$invalid" />
+                            <input class="btn btn-primary pull-right" type="submit" value="Send" ng-click="sendMessage()" ng-disabled="isUserRegistered===false || myForm.chatMessage.$invalid"  />
                         </div>
                     </div>
 
@@ -333,7 +334,7 @@
                         </div>
 
                         <!--log messages-->
-                        <div class="logmessages">
+                        <div class="logmessages" scroll-glue>
                             <div class="list-group-item" ng-repeat="logMsg in logMessages">
                                 {{logMsg.msg}}
                                 <span class="badge">
