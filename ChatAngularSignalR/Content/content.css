@@ -1,0 +1,14 @@
+﻿.messages {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.users {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.logmessages {
+    max-height: 200px;
+    overflow-y: auto;
+}

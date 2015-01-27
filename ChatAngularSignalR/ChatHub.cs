@@ -7,6 +7,13 @@ using Newtonsoft.Json;
 
 namespace ChatAngularSignalR
 {
+    /// <summary>
+    /// Simple chatHub. Communication happens like this
+    /// 1. client => NewClient, server => SendAllUsers
+    /// 2. client => registerUser, server => UserRegistered, NewUser, Send,SendLogMessage
+    /// 3. client => send, server=> chatMessage
+    /// 4. client => logOut, server =>SendAllUsers,SendLogMessage,Send
+    /// </summary>
     public class ChatHub : Hub
     {
         readonly string SYSTEM_USERNAME = "system";
@@ -15,7 +22,7 @@ namespace ChatAngularSignalR
         {
             public string name { get; set; }
         }
-   
+
         static Object lockObj = new object();
 
         static private List<User> _users = new List<User>();
@@ -69,8 +76,11 @@ namespace ChatAngularSignalR
 
             if (!exists)
             {
+                //Send user registered to caller
                 UserRegistered(newUser);
+                //Tell all clients new user has been added
                 NewUser(newUser);
+                //Send as  a chat message
                 Send(SYSTEM_USERNAME, string.Format("User '{0}' has joined the chat", newUser.name));
                 msg = string.Format("User '{0}' added", newUser.name);
             }
@@ -79,7 +89,7 @@ namespace ChatAngularSignalR
                 msg = string.Format("User '{0}' already exists", newUser.name);
             }
 
-
+            //send log message only to the caller
             SendLogMessage(msg);
         }
 
@@ -96,6 +106,7 @@ namespace ChatAngularSignalR
         {
             this.Clients.Caller.userRegistered(u);
         }
+
         /// <summary>
         /// Send - log message
         /// </summary>
@@ -110,10 +121,10 @@ namespace ChatAngularSignalR
             {
                 this.Clients.Caller.logMessage(msg);
             }
-            
+
         }
 
-        
+
 
         /// <summary>
         /// Recieve - new client
@@ -122,19 +133,19 @@ namespace ChatAngularSignalR
         {
 
             SendAllUsers();
-            
+
         }
 
         public void LogOut(string name)
         {
             bool exists = false;
-            
+
 
             lock (lockObj)
             {
                 var user = Users.Where(x => x.name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
 
-                exists = user!=null;
+                exists = user != null;
 
                 //user exists, so we should remove it from the collection
                 if (exists)
@@ -148,8 +159,8 @@ namespace ChatAngularSignalR
             if (exists)
             {
                 SendAllUsers(true);
-                SendLogMessage(String.Format("User {0} has been removed", name));
-                Send(SYSTEM_USERNAME, String.Format("User {0} has left", name));
+                SendLogMessage(String.Format("User '{0}' has been removed", name));
+                Send(SYSTEM_USERNAME, String.Format("User '{0}' has left", name));
             }
 
         }
@@ -166,10 +177,10 @@ namespace ChatAngularSignalR
             else
             {
                 this.Clients.Caller.allUsers(Users);
-            }            
-            
+            }
+
         }
 
-        
+
     }
 }
